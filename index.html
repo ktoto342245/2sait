@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Цены</title>
-    <style>
+        <style>
         body {
             font-family: 'Arial', sans-serif;
             background: linear-gradient(135deg, #6a11cb, #2575fc);
@@ -15,41 +15,102 @@
             margin: 0;
             height: 100vh;
             display: flex;
-            justify-content: center;
-            align-items: center;
             flex-direction: column;
+            align-items: center;
+            overflow-y: auto;
         }
 
         h1 {
             font-size: 3em;
-            margin-bottom: 30px;
+            margin: 20px 0;
             text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.4);
+            animation: fadeIn 1s ease-in-out;
         }
 
         .price-container {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
             padding: 20px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            width: 80%;
-            max-width: 600px;
+            max-width: 1200px;
         }
 
-        .price-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 15px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-            font-size: 18px;
+        .price-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            width: 250px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            opacity: 0;
+            animation: slideUp 0.5s ease forwards;
+            animation-delay: calc(var(--order) * 0.2s);
+        }
+
+        .price-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .price-card h2 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
             text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
         }
 
-        .price-item:last-child {
-            border-bottom: none;
+        .price-card .price {
+            font-size: 2.5em;
+            color: #ff6f61;
+            margin: 10px 0;
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
         }
 
+        .price-card ul {
+            list-style: none;
+            padding: 0;
+            text-align: left;
+            margin-bottom: 20px;
+            font-size: 1em;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+        }
+
+        .price-card ul li {
+            margin: 10px 0;
+        }
+
+        .price-card .buy-btn {
+            background: linear-gradient(45deg, #ff6f61, #ff9f1c);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1em;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.3s ease, transform 0.3s ease;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+        }
+
+        .price-card .buy-btn:hover {
+            background: linear-gradient(45deg, #e65b50, #e68c00);
+            transform: scale(1.05);
+        }
+
+        /* Анимации */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Кнопка возврата */
         .back-button {
-            margin-top: 30px;
+            margin-top: 20px;
             background-color: #ff6f61;
             color: white;
             padding: 15px 40px;
@@ -58,6 +119,8 @@
             border-radius: 30px;
             box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
             transition: background-color 0.3s, transform 0.3s;
+            animation: fadeIn 1s ease-in-out 0.5s forwards;
+            opacity: 0;
         }
 
         .back-button:hover {
@@ -68,21 +131,137 @@
 </head>
 
 <body>
-    <div class="container">
-        <h1>Цены на услуги</h1>
-        <div class="price-container">
-            <div class="price-item">
-                <span>Базовый доступ</span>
-                <span>500 ₽</span>
-            </div>
-            <div class="price-item">
-                <span>Премиум подписка</span>
-                <span>1500 ₽</span>
-            </div>
-            <div class="price-item">
-                <span>Индивидуальная консультация</span>
-                <span>3000 ₽</span>
-            </div>
+    <h1>Цены на услуги</h1>
+    <div class="price-container">
+        <!-- Услуги для подростков -->
+        <div class="price-card" style="--order: 0;">
+            <h2>Базовая помощь</h2>
+            <div class="price">30-80 грн</div>
+            <ul>
+                <li>Зависит от местоположения и времени</li>
+            </ul>
+            <a href="#" class="buy-btn">Купить</a>
+        </div>
+
+        <div class="price-card" style="--order: 1;">
+            <h2>Установка 1</h2>
+            <div class="price">35 грн</div>
+            <ul>
+                <li>Простая установка</li>
+            </ul>
+            <a href="#" class="buy-btn">Купить</a>
+        </div>
+
+        <div class="price-card" style="--order: 2;">
+            <h2>Установка 2</h2>
+            <div class="price">69 грн</div>
+            <ul>
+                <li>Расширенная поддержка</li>
+            </ul>
+            <a href="#" class="buy-btn">Купить</a>
+        </div>
+
+        <div class="price-card" style="--order: 3;">
+            <h2>Установка 3</h2>
+            <div class="price">40 грн</div>
+            <ul>
+                <li>Базовая настройка</li>
+            </ul>
+            <a href="#" class="buy-btn">Купить</a>
+        </div>
+
+        <div class="price-card" style="--order: 4;">
+            <h2>Комплексная помощь 1</h2>
+            <div class="price">260 грн</div>
+            <ul>
+                <li>Полный набор услуг</li>
+            </ul>
+            <a href="#" class="buy-btn">Купить</a>
+        </div>
+
+        <div class="price-card" style="--order: 5;">
+            <h2>Комплексная помощь 2</h2>
+            <div class="price">340 грн</div>
+            <ul>
+                <li>Расширенный набор</li>
+            </ul>
+            <a href="#" class="buy-btn">Купить</a>
+        </div>
+
+        <div class="price-card" style="--order: 6;">
+            <h2>Премиум помощь</h2>
+            <div class="price">550 грн</div>
+            <ul>
+                <li>Максимальная поддержка</li>
+            </ul>
+            <a href="#" class="buy-btn">Купить</a>
+        </div>
+
+        <div class="price-card" style="--order: 7;">
+            <h2>Много установок</h2>
+            <div class="price">50-90 грн</div>
+            <ul>
+                <li>Базовая установка: 50 грн</li>
+                <li>Каждая доп. установка: 90 грн</li>
+            </ul>
+            <a href="#" class="buy-btn">Купить</a>
+        </div>
+
+        <div class="price-card" style="--order: 8;">
+            <h2>Windows установка</h2>
+            <div class="price">60 грн</div>
+            <ul>
+                <li>Зависит от версии Windows</li>
+            </ul>
+            <a href="#" class="buy-btn">Купить</a>
+        </div>
+
+        <!-- Услуги для родителей -->
+        <div class="price-card" style="--order: 9;">
+            <h2>Базовая помощь (родители)</h2>
+            <div class="price">20-50 грн</div>
+            <ul>
+                <li>Зависит от услуги и времени</li>
+            </ul>
+            <a href="#" class="buy-btn">Купить</a>
+        </div>
+
+        <div class="price-card" style="--order: 10;">
+            <h2>Установка 1 (родители)</h2>
+            <div class="price">80-90 грн</div>
+            <ul>
+                <li>Простая установка</li>
+            </ul>
+            <a href="#" class="buy-btn">Купить</a>
+        </div>
+
+        <div class="price-card" style="--order: 11;">
+            <h2>Комплексная помощь 1 (родители)</h2>
+            <div class="price">250 грн</div>
+            <ul>
+                <li>Полный набор услуг</li>
+            </ul>
+            <a href="#" class="buy-btn">Купить</a>
+        </div>
+
+        <div class="price-card" style="--order: 12;">
+            <h2>Премиум помощь 1 (родители)</h2>
+            <div class="price">5900 грн</div>
+            <ul>
+                <li>Максимальная поддержка</li>
+            </ul>
+            <a href="#" class="buy-btn">Купить</a>
+        </div>
+
+        <div class="price-card" style="--order: 13;">
+            <h2>Премиум помощь 2 (родители)</h2>
+            <div class="price">1200 грн</div>
+            <ul>
+                <li>Расширенный набор</li>
+            </ul>
+            <a href="#" class="buy-btn">Купить</a>
+        </div>
+    </div>
         </div>
         <a href="https://ktoto342245.github.io/nonentity" class="back-button">Назад</a>
     </div>
