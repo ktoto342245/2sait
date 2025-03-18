@@ -1,11 +1,91 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>help1</title>
+    <title>Цены</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            color: white;
+            text-align: center;
+            padding: 0;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.4);
+        }
+
+        .price-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            width: 80%;
+            max-width: 600px;
+        }
+
+        .price-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            font-size: 18px;
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .price-item:last-child {
+            border-bottom: none;
+        }
+
+        .back-button {
+            margin-top: 30px;
+            background-color: #ff6f61;
+            color: white;
+            padding: 15px 40px;
+            text-decoration: none;
+            font-size: 18px;
+            border-radius: 30px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .back-button:hover {
+            background-color: #e65b50;
+            transform: scale(1.1);
+        }
+    </style>
 </head>
+
 <body>
-    
+    <div class="container">
+        <h1>Цены на услуги</h1>
+        <div class="price-container">
+            <div class="price-item">
+                <span>Базовый доступ</span>
+                <span>500 ₽</span>
+            </div>
+            <div class="price-item">
+                <span>Премиум подписка</span>
+                <span>1500 ₽</span>
+            </div>
+            <div class="price-item">
+                <span>Индивидуальная консультация</span>
+                <span>3000 ₽</span>
+            </div>
+        </div>
+        <a href="index.html" class="back-button">Назад</a>
+    </div>
 </body>
+
 </html>
