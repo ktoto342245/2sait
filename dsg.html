@@ -70,25 +70,27 @@
 
         .spark {
             position: fixed;
-            width: 10px;
-            height: 10px;
-            background: #ff3399;
+            width: 12px;
+            height: 12px;
+            background: linear-gradient(45deg, #ff3399, #00ffff);
             border-radius: 50%;
             pointer-events: none;
-            animation: spark 0.8s ease-out forwards;
             z-index: 9999;
+            animation: spark 1s ease-out forwards;
+            transform-origin: center;
         }
 
         @keyframes spark {
             0% {
-                transform: scale(1);
+                transform: scale(1) rotate(0deg);
                 opacity: 1;
-                box-shadow: 0 0 20px #00ffff,
-                           0 0 40px #ff3399,
-                           0 0 60px rgba(255, 51, 153, 0.8);
+                box-shadow: 0 0 30px #ff3399,
+                           0 0 50px #00ffff,
+                           0 0 70px rgba(255, 51, 255, 0.8),
+                           0 0 100px rgba(0, 255, 255, 0.6);
             }
             100% {
-                transform: scale(3);
+                transform: scale(4) rotate(180deg);
                 opacity: 0;
                 box-shadow: none;
             }
@@ -630,6 +632,7 @@
         const trail = document.querySelector('.cursor-trail');
         const sparkContainer = document.querySelector('.spark-container');
         const isTouchDevice = window.matchMedia("(hover: none)").matches;
+        let lastSparkTime = 0;
 
         if (!isTouchDevice) {
             // PC: Custom cursor
@@ -640,25 +643,40 @@
                 trail.style.top = e.clientY - 4 + 'px';
             });
         } else {
-            // Mobile: Spark effect on touch
+            // Mobile: Enhanced spark effect on touch
             document.addEventListener('touchstart', createSpark);
             document.addEventListener('touchmove', createSpark);
 
             function createSpark(e) {
+                const now = Date.now();
+                if (now - lastSparkTime < 50) return; // Ограничение частоты
+                lastSparkTime = now;
+
                 e.preventDefault();
                 const touch = e.touches[0];
                 const x = touch.clientX;
                 const y = touch.clientY;
 
-                const spark = document.createElement('div');
-                spark.classList.add('spark');
-                spark.style.left = `${x}px`;
-                spark.style.top = `${y}px`;
-                sparkContainer.appendChild(spark);
+                // Создаём 3–5 искр
+                const sparkCount = Math.floor(Math.random() * 3) + 3;
+                for (let i = 0; i < sparkCount; i++) {
+                    const spark = document.createElement('div');
+                    spark.classList.add('spark');
+                    spark.style.left = `${x}px`;
+                    spark.style.top = `${y}px`;
 
-                setTimeout(() => {
-                    spark.remove();
-                }, 800); // Увеличено до 800 мс в соответствии с анимацией
+                    // Случайное смещение и вращение
+                    const angle = Math.random() * 360;
+                    const distance = Math.random() * 20 + 10;
+                    spark.style.transform = `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px)`;
+                    spark.style.animationDelay = `${Math.random() * 0.2}s`;
+
+                    sparkContainer.appendChild(spark);
+
+                    setTimeout(() => {
+                        spark.remove();
+                    }, 1000); // Соответствует длительности анимации
+                }
             }
         }
     </script>
