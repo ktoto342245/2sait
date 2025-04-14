@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Rexking</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: linear-gradient(145deg, #0b1126, #2a3d8f);
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+            cursor: none;
+        }
+
+        /* Интерактивный фон */
+        canvas#bgCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.7;
+        }
+
+        /* Кастомный курсор */
+        .cursor {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ff007a;
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transition: all 0.1s ease;
+        }
+
+        .cursor-trail {
+            width: 8px;
+            height: 8px;
+            background: #00ffcc;
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9998;
+            opacity: 0.6;
+        }
+
+        /* Скрываем кастомный курсор на мобильных */
+        @media (hover: none) {
+            .cursor,
+            .cursor-trail {
+                display: none;
+            }
+            body {
+                cursor: default; /* Восстанавливаем стандартный курсор на мобильных */
+            }
+        }
+
+        /* Стили для искр */
+        .spark {
+            position: fixed;
+            width: 6px;
+            height: 6px;
+            background: #ff007a;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: spark 0.6s ease-out forwards;
+            z-index: 9999;
+        }
+
+        @keyframes spark {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+                box-shadow: 0 0 10px #00ffcc, 0 0 20px #ff007a;
+            }
+            100% {
+                transform: scale(2);
+                opacity: 0;
+                box-shadow: none;
+            }
+        }
+
+        header {
+            width: 100%;
+            padding: 1.5rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(11, 17, 38, 0.85);
+            backdrop-filter: blur(15px);
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .logo {
+            font-size: clamp(2rem, 5vw, 2.5rem);
+            font-weight: 700;
+            background: linear-gradient(45deg, #00ffcc, #ff007a);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            animation: logoGlow 3s infinite ease-in-out;
+        }
+
+        @keyframes logoGlow {
+            0%,
+            100% {
+                text-shadow: 0 0 10px rgba(0, 255, 204, 0.3);
+            }
+            50% {
+                text-shadow: 0 0 20px rgba(0, 255, 204, 0.5);
+            }
+        }
+
+        .nav-toggle {
+            display: none;
+            font-size: 2rem;
+            background: none;
+            border: none;
+            color: #ffffff;
+            cursor: pointer;
+            transition: transform 0.3s ease, color 0.3s ease;
+        }
+
+        .nav-toggle:hover {
+            color: #00ffcc;
+            transform: rotate(90deg);
+        }
+
+        nav {
+            display: flex;
+            gap: 1.8rem;
+        }
+
+        nav a {
+            color: #ffffff;
+            text-decoration: none;
+            font-size: clamp(1rem, 2vw, 1.2rem);
+            font-weight: 400;
+            padding: 0.7rem 1.5rem;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            position: relative;
+            background: linear-gradient(90deg, transparent, transparent);
+        }
+
+        nav a:hover {
+            background: linear-gradient(90deg, #00ffcc, #ff007a);
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(0, 255, 204, 0.3);
+        }
+
+        nav a::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: #ff007a;
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        nav a:hover::before {
+            width: 80%;
+        }
+
+        .main-container {
+            text-align: center;
+            width: 90%;
+            max-width: 1000px;
+            margin: 8rem auto 6rem;
+            padding: 3.5rem;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 25px;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 15px 60px rgba(0, 0, 0, 0.4);
+            z-index: 1;
+            animation: fadeIn 1.5s ease-out;
+            position: relative;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-size: clamp(3rem, 7vw, 4.5rem);
+            font-weight: 700;
+            background: linear-gradient(45deg, #00ffcc, #ff007a);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 1.8rem;
+            line-height: 1.2;
+            text-shadow: 0 3px 15px rgba(0, 0, 0, 0.4);
+            animation: textGlow 3s infinite ease-in-out;
+        }
+
+        @keyframes textGlow {
+            0%,
+            100% {
+                text-shadow: 0 0 10px rgba(0, 255, 204, 0.3);
+            }
+            50% {
+                text-shadow: 0 0 20px rgba(0, 255, 204, 0.5);
+            }
+        }
+
+        p {
+            font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+            font-weight: 300;
+            margin-bottom: 3rem;
+            color: #d0d0d0;
+            line-height: 1.8;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            animation: fadeIn 1.8s ease-out 0.3s forwards;
+        }
+
+        .hero-image {
+            margin: 3rem auto;
+            width: clamp(300px, 60vw, 500px);
+            max-width: 100%;
+            border-radius: 25px;
+            box-shadow: 0 20px 70px rgba(0, 0, 0, 0.5);
+            transition: transform 0.6s ease, box-shadow 0.6s ease;
+            border: 3px solid rgba(0, 255, 204, 0.2);
+            animation: imageFloat 4s infinite ease-in-out;
+        }
+
+        @keyframes imageFloat {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .hero-image:hover {
+            transform: scale(1.1) translateY(-10px);
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.6);
+        }
+
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .button {
+            background: linear-gradient(90deg, #00ffcc, #ff007a);
+            color: #ffffff;
+            padding: clamp(1rem, 2.5vw, 1.3rem) clamp(3rem, 7vw, 5rem);
+            text-decoration: none;
+            font-size: clamp(1.1rem, 2.5vw, 1.3rem);
+            font-weight: 600;
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            width: fit-content;
+            max-width: 400px;
+            text-align: center;
+            animation: buttonPulse 2.5s infinite ease-in-out;
+        }
+
+        @keyframes buttonPulse {
+            0%,
+            100% {
+                transform: scale(1);
+                box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+            }
+            50% {
+                transform: scale(1.03);
+                box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+            }
+        }
+
+        .button:hover {
+            background: linear-gradient(90deg, #ff007a, #00ffcc);
+            transform: translateY(-6px) scale(1.08);
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
+            animation: none;
+        }
+
+        .button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .button:hover::before {
+            left: 100%;
+        }
+
+        footer {
+            width: 100%;
+            padding: 2.5rem;
+            text-align: center;
+            background: rgba(11, 17, 38, 0.85);
+            backdrop-filter: blur(15px);
+            color: #d0d0d0;
+            font-size: clamp(1rem, 2vw, 1.1rem);
+            margin-top: 4rem;
+            box-shadow: 0 -4px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        footer a {
+            color: #00ffcc;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        footer a:hover {
+            color: #ff007a;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            header {
+                padding: 1.2rem 2rem;
+            }
+
+            .logo {
+                font-size: clamp(1.6rem, 4.5vw, 2rem);
+            }
+
+            .nav-toggle {
+                display: block;
+            }
+
+            nav {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 80px;
+                left: 0;
+                width: 100%;
+                background: rgba(11, 17, 38, 0.9);
+                padding: 2rem;
+                border-radius: 0 0 20px 20px;
+                box-shadow: 0 4px 25px rgba(0, 0, 0, 0.4);
+            }
+
+            nav.active {
+                display: flex;
+            }
+
+            nav a {
+                font-size: clamp(1rem, 2vw, 1.1rem);
+                padding: 1.2rem;
+            }
+
+            .main-container {
+                width: 95%;
+                margin: 7rem auto 5rem;
+                padding: 2.5rem;
+            }
+
+            h1 {
+                font-size: clamp(2.5rem, 6vw, 3.5rem);
+            }
+
+            p {
+                font-size: clamp(1rem, 2vw, 1.2rem);
+            }
+
+            .hero-image {
+                width: clamp(250px, 50vw, 400px);
+            }
+
+            .button {
+                padding: clamp(0.9rem, 2vw, 1.1rem) clamp(2.5rem, 6vw, 4rem);
+                font-size: clamp(1rem, 2vw, 1.2rem);
+                max-width: 350px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            header {
+                padding: 1rem 1.5rem;
+            }
+
+            .main-container {
+                width: 98%;
+                padding: 2rem;
+                margin: 6rem auto 4rem;
+            }
+
+            h1 {
+                font-size: clamp(2rem, 5vw, 3rem);
+            }
+
+            p {
+                font-size: clamp(0.9rem, 1.8vw, 1.1rem);
+            }
+
+            .hero-image {
+                width: clamp(200px, 45vw, 350px);
+            }
+
+            .button {
+                padding: clamp(0.8rem, 1.5vw, 1rem) clamp(2rem, 5vw, 3rem);
+                font-size: clamp(0.9rem, 1.8vw, 1.1rem);
+                width: 100%;
+                max-width: 300px;
+            }
+
+            footer {
+                padding: 2rem;
+                font-size: clamp(0.9rem, 1.8vw, 1rem);
+            }
+        }
+
+        @media (max-width: 360px) {
+            header {
+                padding: 0.8rem 1rem;
+            }
+
+            .main-container {
+                width: 100%;
+                padding: 1.5rem;
+                margin: 5rem auto 3rem;
+            }
+
+            h1 {
+                font-size: clamp(1.8rem, 4.5vw, 2.5rem);
+            }
+
+            p {
+                font-size: clamp(0.8rem, 1.5vw, 1rem);
+            }
+
+            .hero-image {
+                width: clamp(150px, 40vw, 300px);
+            }
+
+            .button {
+                padding: clamp(0.7rem, 1.2vw, 0.9rem) clamp(1.5rem, 4vw, 2rem);
+                font-size: clamp(0.8rem, 1.5vw, 1rem);
+                max-width: 250px;
+            }
+
+            footer {
+                padding: 1.5rem;
+                font-size: clamp(0.8rem, 1.5vw, 0.9rem);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="bgCanvas"></canvas>
+    <div class="cursor"></div>
+    <div class="cursor-trail"></div>
+    <div class="spark-container"></div>
+
+    <header>
+        <div class="logo">Rexking</div>
+        <button class="nav-toggle">☰</button>
+        <nav>
+            <a href="https://ktoto342245.github.io/nonentity/texpodderska">Техподдержка</a>
+            <a href="https://t.me/Helpmepls53">Связаться с создателем</a>
+            <a href="https://ktoto342245.github.io/nonentity/helping.html">О проекте</a>
+            <a href="https://ktoto342245.github.io/2sait/">Цены</a>
+            <a href="https://ktoto342245.github.io/nonentity/otziv.html">Отзывы</a>
+        </nav>
+    </header>
+
+    <main class="main-container">
+        <img src="https://cdn.pixabay.com/animation/2025/01/31/15/41/15-41-51-373_512.gif" alt="3D изображение Telegram"
+            class="hero-image">
+        <h1>Добро пожаловать в Rexking!</h1>
+        <p>Присоединяйтесь к нашему сообществу, где технологии и идеи создают будущее!</p>
+        <div class="button-container">
+            <a href="https://t.me/+gMUfch4a2bU5ZDVi" class="button">Перейти в Telegram</a>
+            <a href="https://discord.gg/x2U3AxuxvG" class="button">Discord-сервер</a>
+        </div>
+    </main>
+
+    <footer>
+        © 2025 <a href="https://t.me/+gMUfch4a2bU5ZDVi">Rexking</a>. Создано с ✨ для будущего.
+    </footer>
+
+    <script>
+        // Ин Acceptance criteria: Interactive background with particles
+        const canvas = document.getElementById('bgCanvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const particlesArray = [];
+        const numberOfParticles = 100;
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 5 + 1;
+                this.speedX = Math.random() * 0.5 - 0.25;
+                this.speedY = Math.random() * 0.5 - 0.25;
+                this.opacity = Math.random() * 0.5 + 0.3;
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                if (this.size > 0.2) this.size -= 0.01;
+
+                if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+            }
+
+            draw() {
+                ctx.fillStyle = `rgba(0, 255, 204, ${this.opacity})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            for (let i = 0; i < numberOfParticles; i++) {
+                particlesArray.push(new Particle());
+            }
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particlesArray.length; i++) {
+                particlesArray[i].update();
+                particlesArray[i].draw();
+
+                for (let j = i; j < particlesArray.length; j++) {
+                    const dx = particlesArray[i].x - particlesArray[j].x;
+                    const dy = particlesArray[i].y - particlesArray[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < 100) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(0, 255, 204, ${0.2 - distance / 500})`;
+                        ctx.lineWidth = 1;
+                        ctx.moveTo(particlesArray[i].x, particlesArray[i].y);
+                        ctx.lineTo(particlesArray[j].x, particlesArray[j].y);
+                        ctx.stroke();
+                    }
+                }
+
+                if (particlesArray[i].size <= 0.2) {
+                    particlesArray.splice(i, 1);
+                    i--;
+                    particlesArray.push(new Particle());
+                }
+            }
+            requestAnimationFrame(animateParticles);
+        }
+
+        initParticles();
+        animateParticles();
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // Navigation
+        const navToggle = document.querySelector('.nav-toggle');
+        const nav = document.querySelector('nav');
+
+        navToggle.addEventListener('click', () => {
+            nav.classList.toggle('active');
+        });
+
+        nav.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                nav.classList.remove('active');
+            });
+        });
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Custom cursor and spark effect
+        const cursor = document.querySelector('.cursor');
+        const trail = document.querySelector('.cursor-trail');
+        const sparkContainer = document.querySelector('.spark-container');
+        const isTouchDevice = window.matchMedia("(hover: none)").matches;
+
+        if (!isTouchDevice) {
+            // PC: Custom cursor
+            document.addEventListener('mousemove', (e) => {
+                cursor.style.left = e.clientX + 'px';
+                cursor.style.top = e.clientY + 'px';
+                trail.style.left = e.clientX - 4 + 'px';
+                trail.style.top = e.clientY - 4 + 'px';
+            });
+        } else {
+            // Mobile: Spark effect on touch
+            document.addEventListener('touchstart', createSpark);
+            document.addEventListener('touchmove', createSpark);
+
+            function createSpark(e) {
+                e.preventDefault();
+                const touch = e.touches[0];
+                const x = touch.clientX;
+                const y = touch.clientY;
+
+                const spark = document.createElement('div');
+                spark.classList.add('spark');
+                spark.style.left = `${x}px`;
+                spark.style.top = `${y}px`;
+                sparkContainer.appendChild(spark);
+
+                setTimeout(() => {
+                    spark.remove();
+                }, 600);
+            }
+        }
+    </script>
+</body>
+
+</html>
