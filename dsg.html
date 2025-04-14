@@ -70,13 +70,13 @@
 
         .spark {
             position: fixed;
-            width: 12px;
-            height: 12px;
+            width: 8px;
+            height: 8px;
             background: linear-gradient(45deg, #ff3399, #00ffff);
             border-radius: 50%;
             pointer-events: none;
             z-index: 9999;
-            animation: spark 1s ease-out forwards;
+            animation: spark 0.6s ease-out forwards;
             transform-origin: center;
         }
 
@@ -84,13 +84,11 @@
             0% {
                 transform: scale(1) rotate(0deg);
                 opacity: 1;
-                box-shadow: 0 0 30px #ff3399,
-                           0 0 50px #00ffff,
-                           0 0 70px rgba(255, 51, 255, 0.8),
-                           0 0 100px rgba(0, 255, 255, 0.6);
+                box-shadow: 0 0 10px #ff3399,
+                           0 0 20px #00ffff;
             }
             100% {
-                transform: scale(4) rotate(180deg);
+                transform: scale(2) rotate(90deg);
                 opacity: 0;
                 box-shadow: none;
             }
@@ -537,6 +535,7 @@
                 this.y = Math.random() * canvas.height;
                 this.size = Math.random() * 5 + 1;
                 this.speedX = Math.random() * 0.5 - 0.25;
+                Featured
                 this.speedY = Math.random() * 0.5 - 0.25;
                 this.opacity = Math.random() * 0.5 + 0.3;
             }
@@ -643,13 +642,13 @@
                 trail.style.top = e.clientY - 4 + 'px';
             });
         } else {
-            // Mobile: Enhanced spark effect on touch
+            // Mobile: Reduced spark effect on touch
             document.addEventListener('touchstart', createSpark);
             document.addEventListener('touchmove', createSpark);
 
             function createSpark(e) {
                 const now = Date.now();
-                if (now - lastSparkTime < 50) return; // Ограничение частоты
+                if (now - lastSparkTime < 100) return; // Ограничение частоты
                 lastSparkTime = now;
 
                 e.preventDefault();
@@ -657,25 +656,24 @@
                 const x = touch.clientX;
                 const y = touch.clientY;
 
-                // Создаём 3–5 искр
-                const sparkCount = Math.floor(Math.random() * 3) + 3;
+                // Создаём 1–2 искры
+                const sparkCount = Math.floor(Math.random() * 2) + 1;
                 for (let i = 0; i < sparkCount; i++) {
                     const spark = document.createElement('div');
                     spark.classList.add('spark');
                     spark.style.left = `${x}px`;
                     spark.style.top = `${y}px`;
 
-                    // Случайное смещение и вращение
+                    // Небольшое смещение
                     const angle = Math.random() * 360;
-                    const distance = Math.random() * 20 + 10;
+                    const distance = Math.random() * 10 + 5;
                     spark.style.transform = `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px)`;
-                    spark.style.animationDelay = `${Math.random() * 0.2}s`;
 
                     sparkContainer.appendChild(spark);
 
                     setTimeout(() => {
                         spark.remove();
-                    }, 1000); // Соответствует длительности анимации
+                    }, 600); // Соответствует длительности анимации
                 }
             }
         }
