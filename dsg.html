@@ -26,7 +26,6 @@
             cursor: none;
         }
 
-        /* Интерактивный фон */
         canvas#bgCanvas {
             position: absolute;
             top: 0;
@@ -37,7 +36,6 @@
             opacity: 0.7;
         }
 
-        /* Кастомный курсор */
         .cursor {
             width: 20px;
             height: 20px;
@@ -60,26 +58,24 @@
             opacity: 0.6;
         }
 
-        /* Скрываем кастомный курсор на мобильных */
         @media (hover: none) {
             .cursor,
             .cursor-trail {
                 display: none;
             }
             body {
-                cursor: default; /* Восстанавливаем стандартный курсор на мобильных */
+                cursor: default;
             }
         }
 
-        /* Стили для искр */
         .spark {
             position: fixed;
-            width: 6px;
-            height: 6px;
-            background: #ff007a;
+            width: 10px;
+            height: 10px;
+            background: #ff3399;
             border-radius: 50%;
             pointer-events: none;
-            animation: spark 0.6s ease-out forwards;
+            animation: spark 0.8s ease-out forwards;
             z-index: 9999;
         }
 
@@ -87,10 +83,12 @@
             0% {
                 transform: scale(1);
                 opacity: 1;
-                box-shadow: 0 0 10px #00ffcc, 0 0 20px #ff007a;
+                box-shadow: 0 0 20px #00ffff,
+                           0 0 40px #ff3399,
+                           0 0 60px rgba(255, 51, 153, 0.8);
             }
             100% {
-                transform: scale(2);
+                transform: scale(3);
                 opacity: 0;
                 box-shadow: none;
             }
@@ -354,7 +352,6 @@
             color: #ff007a;
         }
 
-        /* Адаптивность */
         @media (max-width: 768px) {
             header {
                 padding: 1.2rem 2rem;
@@ -522,7 +519,7 @@
     </footer>
 
     <script>
-        // Ин Acceptance criteria: Interactive background with particles
+        // Interactive background with particles
         const canvas = document.getElementById('bgCanvas');
         const ctx = canvas.getContext('2d');
 
@@ -661,7 +658,7 @@
 
                 setTimeout(() => {
                     spark.remove();
-                }, 600);
+                }, 800); // Увеличено до 800 мс в соответствии с анимацией
             }
         }
     </script>
